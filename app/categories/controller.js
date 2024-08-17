@@ -1,5 +1,7 @@
 const Category = require('./model');
 const dataDummy = require('./dataDummy');
+const Products = require('../products/model');
+const Orders = require('../orders/model');
 
 const addCategories = async (req, res, next) => {
     try {
@@ -83,6 +85,8 @@ const deleteCategory = async (req, res, next) => {
         if (!category) {
             return res.status(404).json({ message: 'Category not found' });
         }
+        await Products.deleteMany({ category: id });
+        await Orders.deleteMany({ product: products._id });
         res.status(200).json({ category, status: 200 });
     } catch (error) {
         if (error.name === 'ValidationError') {
