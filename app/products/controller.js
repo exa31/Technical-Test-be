@@ -72,11 +72,13 @@ const updateProduct = async (req, res, next) => {
     try {
         const { id } = req.params;
         const payload = req.body;
-        const category = await Categories.findOne({ name: payload.category });
-        if (!category) {
-            return res.status(400).json({ message: 'Category not found, create your category first' });
+        if (payload.category) {
+            const category = await Categories.findOne({ name: payload.category });
+            if (!category) {
+                return res.status(400).json({ message: 'Category not found, create your category first' });
+            }
+            payload.category = category._id;
         }
-        payload.category = category._id;
         const product = await Products.findByIdAndUpdate(id, payload, { new: true, runValidators: true }).populate('category');
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
