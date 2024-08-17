@@ -42,6 +42,9 @@ const getOrder = async (req, res, next) => {
     try {
         const { id } = req.params;
         const order = await Order.findById(id).populate('product').populate('user');
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
         res.status(200).json({ order, status: 200 });
     } catch (error) {
         if (error.name === 'ValidationError') {
@@ -71,7 +74,7 @@ const deleteOrder = async (req, res, next) => {
     try {
         const { id } = req.params;
         await Order.findByIdAndDelete(id);
-        res.status(204).json({ status: 204 });
+        res.status(204);
     } catch (error) {
         next(error);
     }
